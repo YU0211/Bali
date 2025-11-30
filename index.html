@@ -127,7 +127,6 @@
             </div>
 
             <!-- Date Selector (Only visible on Itinerary tab) -->
-            <!-- Adjusted spacing: Added 'justify-between' and standardized widths -->
             <div v-if="currentTab === 'itinerary'" class="w-full overflow-x-auto no-scrollbar pb-2 pt-1" id="date-scroller">
                 <div class="flex sm:justify-between gap-3 min-w-max px-1">
                     <button 
@@ -150,7 +149,6 @@
         </header>
 
         <!-- Main Content Area -->
-        <!-- Increased padding-top (pt-56) to prevent overlap with the taller header -->
         <main class="flex-1 overflow-y-auto no-scrollbar pb-32 pt-56 bg-bali-sand scroll-smooth" id="main-scroll">
             
             <!-- VIEW: ITINERARY -->
@@ -259,13 +257,27 @@
                             </div>
                             <div class="flex justify-between items-end">
                                 <span class="text-[10px] px-2 py-1 bg-slate-100 rounded-md text-slate-500 font-medium">{{ spot.area }}</span>
-                                <button @click="openAddToDayModal(spot)" class="bg-bali-ocean text-white w-8 h-8 rounded-full shadow-lg active:scale-95 transition-transform flex items-center justify-center hover:bg-bali-green">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
+                                
+                                <div class="flex gap-2">
+                                    <!-- New Google Map Icon Link -->
+                                    <a :href="getGoogleMapsUrl(spot.name)" target="_blank" class="bg-white text-slate-400 border border-slate-200 w-8 h-8 rounded-full shadow-sm active:scale-95 transition-transform flex items-center justify-center hover:text-bali-ocean hover:border-bali-ocean">
+                                        <i class="fa-solid fa-map-location-dot text-xs"></i>
+                                    </a>
+
+                                    <!-- Add to Itinerary Button -->
+                                    <button @click="openAddToDayModal(spot)" class="bg-bali-ocean text-white w-8 h-8 rounded-full shadow-lg active:scale-95 transition-transform flex items-center justify-center hover:bg-bali-green">
+                                        <i class="fa-solid fa-plus text-xs"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Add Custom Spot Button -->
+                <button @click="openAddSpotModal" class="w-full py-4 border-2 border-dashed border-slate-300 rounded-2xl text-slate-400 font-medium hover:border-bali-green hover:text-bali-green hover:bg-bali-green/5 transition-all mt-4 mb-4 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> 新增探索地點
+                </button>
             </div>
 
             <!-- VIEW: FOOTPRINT MAP (Simulated) -->
@@ -383,6 +395,52 @@
             </div>
         </transition>
 
+        <!-- MODAL: Add Custom Spot -->
+        <transition name="slide-up">
+            <div v-if="showAddSpotModal" class="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+                <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" @click="showAddSpotModal = false"></div>
+                <div class="bg-white w-full sm:w-[400px] sm:rounded-2xl rounded-t-3xl p-6 shadow-2xl relative z-50">
+                    
+                    <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-6">新增探索地點</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">地點名稱</label>
+                            <input v-model="spotForm.name" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-bali-green" placeholder="例如：好吃咖啡店">
+                        </div>
+                        
+                        <div class="flex gap-4">
+                             <div class="w-1/2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">分類</label>
+                                <select v-model="spotForm.category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-bali-green">
+                                    <option value="food">美食</option>
+                                    <option value="cafe">咖啡</option>
+                                    <option value="yoga">瑜珈</option>
+                                    <option value="massage">按摩</option>
+                                    <option value="sightseeing">觀光</option>
+                                </select>
+                            </div>
+                            <div class="w-1/2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">區域</label>
+                                <input v-model="spotForm.area" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-bali-green" placeholder="例如：Ubud">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">簡短描述</label>
+                            <textarea v-model="spotForm.desc" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-bali-green" placeholder="推薦理由..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 mt-8">
+                        <button @click="showAddSpotModal = false" class="flex-1 py-3.5 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200">取消</button>
+                        <button @click="saveNewSpot" class="flex-1 py-3.5 rounded-xl font-bold text-white bg-bali-green shadow-lg shadow-bali-green/30 hover:bg-opacity-90">新增</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
         <!-- MODAL: Add from Explore -->
         <transition name="slide-up">
             <div v-if="showAddToDayModal" class="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
@@ -422,6 +480,7 @@
                 const activeDayIndex = ref(0);
                 const showModal = ref(false);
                 const showAddToDayModal = ref(false);
+                const showAddSpotModal = ref(false); // New Modal State
                 const isEditing = ref(false);
                 const selectedSpot = ref(null);
                 const activeCategory = ref('all');
@@ -456,7 +515,7 @@
                     ]
                 });
 
-                // Explore Data - Centered around JAPA Suites (Pengosekan/Ubud)
+                // Explore Data
                 const categories = [
                     { id: 'all', name: '全部' },
                     { id: 'food', name: '美食' },
@@ -482,6 +541,15 @@
                     category: 'sightseeing',
                     location: '',
                     note: ''
+                });
+
+                // New Spot Form
+                const spotForm = ref({
+                    name: '',
+                    category: 'food',
+                    area: '',
+                    desc: '',
+                    rating: 5.0
                 });
 
                 const tabs = [
@@ -511,12 +579,9 @@
                     return spots.value.filter(spot => spot.category === activeCategory.value);
                 });
 
-                // Simulate "Next Up" Event logic
                 const nextEvent = computed(() => {
-                    // For demo purposes, we just find the first event of the CURRENT active day that is somewhat reasonable
-                    // In a real app, check against new Date()
                     if (sortedEvents.value.length > 0) {
-                        return sortedEvents.value[0]; // Simply returning the first one for the demo visual
+                        return sortedEvents.value[0];
                     }
                     return null;
                 });
@@ -549,7 +614,7 @@
                     window.open(getGoogleMapsUrl(location), '_blank');
                 };
 
-                // CRUD
+                // CRUD Events
                 const openAddModal = () => {
                     isEditing.value = false;
                     form.value = { id: Date.now(), title: '', time: '09:00', category: 'sightseeing', location: '', note: '' };
@@ -580,6 +645,24 @@
                     }
                 };
 
+                // Add Spot Functionality
+                const openAddSpotModal = () => {
+                    spotForm.value = { name: '', category: 'food', area: '', desc: '', rating: 5.0 };
+                    showAddSpotModal.value = true;
+                };
+
+                const saveNewSpot = () => {
+                    spots.value.push({
+                        id: Date.now(),
+                        ...spotForm.value,
+                        distance: '自訂地點',
+                        image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=400' // Default Balinese Image
+                    });
+                    showAddSpotModal.value = false;
+                    // Auto switch to 'all' or specific category to show the new item
+                    activeCategory.value = 'all';
+                };
+
                 // Add from Explore
                 const openAddToDayModal = (spot) => {
                     selectedSpot.value = spot;
@@ -597,12 +680,10 @@
                         note: 'From Explore'
                     });
                     showAddToDayModal.value = false;
-                    // Simple notification
                     const btn = document.activeElement;
                     if(btn) {
                         const originalText = btn.innerText;
-                        btn.innerText = "已加入!";
-                        setTimeout(() => btn.innerText = originalText, 1000);
+                        // Just a visual feedback if needed, but modal closing is usually enough
                     }
                 };
 
@@ -618,8 +699,10 @@
                     filteredSpots,
                     showModal,
                     showAddToDayModal,
+                    showAddSpotModal,
                     isEditing,
                     form,
+                    spotForm,
                     tabs,
                     getPageTitle,
                     selectedSpot,
@@ -632,6 +715,8 @@
                     editEvent,
                     saveEvent,
                     deleteEvent,
+                    openAddSpotModal,
+                    saveNewSpot,
                     openAddToDayModal,
                     confirmAddToDay,
                     openMapLink,
