@@ -90,6 +90,16 @@
             }
         }
     </script>
+    <script>
+    // 強制移除舊版 Service Worker
+    if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((reg) => {
+        reg.unregister();
+        });
+    });
+    }
+    </script>
 </head>
 <body class="text-slate-800 antialiased h-screen overflow-hidden selection:bg-bali-green selection:text-white">
 
