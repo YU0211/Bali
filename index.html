@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <title>Bali Trip 2025 - JAPA Edition</title>
     
     <!-- Tailwind CSS -->
@@ -12,6 +13,9 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     
     <!-- FontAwesome -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#4A6C6F">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
@@ -488,7 +492,7 @@
 
                 // --- Computed ---
                 const getPageTitle = computed(() => {
-                    if (currentTab.value === 'itinerary') return 'My Trip';
+                    if (currentTab.value === 'itinerary') return '烏布 !!!';
                     if (currentTab.value === 'explore') return 'JAPA Nearby';
                     if (currentTab.value === 'map') return 'Route Map';
                     return '';
@@ -636,5 +640,11 @@
             }
         }).mount('#app');
     </script>
+    <script>
+    if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js');
+    }
+    </script>
+
 </body>
 </html>
