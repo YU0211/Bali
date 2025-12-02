@@ -581,17 +581,11 @@
     window.dispatchEvent(new Event("firebase-ready"));
     </script>
     <script>
-<<<<<<< HEAD
         const { createApp, ref, computed, nextTick } = Vue;
         const myMapEmbedUrl = ref("https://www.google.com/maps/d/embed?mid=16Wj1a1x_1wIqio6fdctKRFKuOGM9b20&hl=zh-TW&ehbc=2E312F");
 
 
         createApp({
-=======
-        const { createApp, ref, computed, onMounted, onBeforeUnmount } = Vue;
-        window.addEventListener("firebase-ready", () =>{
-            createApp({
->>>>>>> ca70802fa35fff6400f64d902aee809ce6f86a04
             setup() {
                 if (!window.firebaseStore) {
                     throw new Error('Firebase 尚未初始化，請確認 SDK 已正確載入');
@@ -932,20 +926,10 @@
                     openAddToDayModal,
                     confirmAddToDay,
                     openMapLink,
-<<<<<<< HEAD
                     myMapEmbedUrl,
-                    closeModal: () => showModal.value = false
-=======
-                    closeModal: () => {
-                        showModal.value = false;
-                        form.value = createEmptyForm();
                     }
->>>>>>> ca70802fa35fff6400f64d902aee809ce6f86a04
                 };
-            }
         }).mount('#app');
-    })
-        
     </script>
     <script>
     //if ('serviceWorker' in navigator) {
