@@ -281,43 +281,26 @@
             </div>
 
             <!-- VIEW: FOOTPRINT MAP (Simulated) -->
-            <div v-else-if="currentTab === 'map'" class="px-0 h-full">
+            <!-- VIEW: FOOTPRINT MAP (Google My Maps) -->
+            <div v-else-if="currentTab === 'map'" class="px-0 h-full flex flex-col">
                 <div class="sticky top-56 z-10 bg-bali-sand/95 backdrop-blur px-5 py-3 mb-2 border-b border-slate-100">
                     <p class="text-sm text-slate-500 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        顯示 {{ days[activeDayIndex].date }} (Day {{ activeDayIndex + 1 }}) 路線
+                        顯示整體旅程地圖（Google My Maps）
                     </p>
                 </div>
-                
-                <div class="relative w-full h-[500px] bg-slate-100 overflow-hidden relative mt-0">
-                    <!-- Map Background Art -->
-                    <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <span class="text-9xl text-slate-300 opacity-20 font-bold -rotate-12">UBUD</span>
-                    </div>
 
-                    <!-- Simulated Route -->
-                    <div class="absolute inset-0 p-10">
-                         <svg class="w-full h-full drop-shadow-lg" style="overflow: visible;">
-                            <path v-if="sortedEvents.length > 1" d="M 50 50 Q 150 150 200 80 T 100 250" fill="none" stroke="#4A6C6F" stroke-width="4" stroke-dasharray="8,6" stroke-linecap="round"/>
-                        </svg>
-
-                        <!-- Plotting Points -->
-                        <div v-for="(event, i) in sortedEvents" :key="event.id" 
-                             class="absolute flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 transition-all hover:scale-110 z-10 cursor-pointer group"
-                             :style="{ top: (20 + (i * 15)) + '%', left: (20 + (i * 20 % 60)) + '%' }"
-                             @click="openMapLink(event.location)"
-                        >
-                            <div class="bg-bali-sunset text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white font-bold text-xs relative z-20">
-                                {{ i + 1 }}
-                            </div>
-                            <div class="bg-white px-3 py-1.5 rounded-lg shadow-lg mt-2 text-[10px] font-bold whitespace-nowrap text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity absolute top-8 z-30 pointer-events-none">
-                                {{ event.location }}
-                            </div>
-                        </div>
-                    </div>
+                 <!-- 這塊會自動撐滿 main 剩下的高度 -->
+                <div class="flex-1 mt-0">
+                    <iframe
+                        :src="myMapEmbedUrl"
+                        class="w-full h-full border-0"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                    ></iframe>
                 </div>
             </div>
+
 
         </main>
 
@@ -472,6 +455,8 @@
 
     <script>
         const { createApp, ref, computed, nextTick } = Vue;
+        const myMapEmbedUrl = ref("https://www.google.com/maps/d/embed?mid=16Wj1a1x_1wIqio6fdctKRFKuOGM9b20&hl=zh-TW&ehbc=2E312F");
+
 
         createApp({
             setup() {
@@ -720,6 +705,7 @@
                     openAddToDayModal,
                     confirmAddToDay,
                     openMapLink,
+                    myMapEmbedUrl,
                     closeModal: () => showModal.value = false
                 };
             }
