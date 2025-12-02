@@ -159,8 +159,12 @@
         </header>
 
         <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto no-scrollbar pb-32 pt-56 bg-bali-sand scroll-smooth" id="main-scroll">
-            
+        <!-- <main class="flex-1 overflow-y-auto no-scrollbar pb-32 pt-56 bg-bali-sand scroll-smooth" id="main-scroll"> -->
+        <main id="main-scroll"
+                :class="['flex-1 overflow-y-auto no-scrollbar bg-bali-sand scroll-smooth',
+                currentTab === 'map' ? 'pt-56 pb-0' : 'pt-56 pb-32'
+            ]">
+
             <!-- VIEW: ITINERARY -->
             <div v-if="currentTab === 'itinerary'" class="px-5 space-y-6">
                 
@@ -298,23 +302,26 @@
             <!-- VIEW: FOOTPRINT MAP (Simulated) -->
             <!-- VIEW: FOOTPRINT MAP (Google My Maps) -->
             <div v-else-if="currentTab === 'map'" class="px-0 h-full flex flex-col">
-                <div class="sticky top-56 z-10 bg-bali-sand/95 backdrop-blur px-5 py-3 mb-2 border-b border-slate-100">
+                <!-- 上面的說明列，不需要 sticky，只要正常貼在 map 上方 -->
+                <div class="bg-bali-sand/95 backdrop-blur px-5 py-3 mb-2 border-b border-slate-100">
                     <p class="text-sm text-slate-500 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                         顯示整體旅程地圖（Google My Maps）
                     </p>
                 </div>
 
-                 <!-- 這塊會自動撐滿 main 剩下的高度 -->
+                <!-- 這塊會吃掉 map view 剩下所有高度 -->
                 <div class="flex-1 mt-0">
                     <iframe
-                        :src="myMapEmbedUrl"
+                        src="https://www.google.com/maps/d/embed?mid=16Wj1a1x_1wIqio6fdctKRFKuOGM9b20&ehbc=2E312F"
                         class="w-full h-full border-0"
                         loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"
                     ></iframe>
                 </div>
             </div>
+
+
 
 
         </main>
