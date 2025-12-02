@@ -113,9 +113,9 @@
                 <div>
                     <h2 class="text-[10px] font-bold text-bali-sunset tracking-widest uppercase mb-0.5">Dec 10 - Dec 17</h2>
                     <h1 class="text-xl font-bold text-bali-green leading-tight">{{ getPageTitle }}</h1>
-                    <div class="flex items-center gap-2 mt-1 text-xs text-slate-500">
+                    <!-- <div class="flex items-center gap-2 mt-1 text-xs text-slate-500">
                         <i class="fa-solid fa-location-dot"></i> JAPA Suites & Villas
-                    </div>
+                    </div> -->
                 </div>
 
                 <!-- Weather & Current Event Widget -->
@@ -159,7 +159,13 @@
         </header>
 
         <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto no-scrollbar pb-32 pt-56 bg-bali-sand scroll-smooth" id="main-scroll">
+        <main
+        id="main-scroll"
+        :class="[
+            'flex-1 overflow-y-auto no-scrollbar bg-bali-sand scroll-smooth',
+            currentTab === 'map' ? 'pt28 pb-0' : 'pt-60 pb-32'
+        ]"
+        >
             
             <!-- VIEW: ITINERARY -->
             <div v-if="currentTab === 'itinerary'" class="px-5 space-y-6">
@@ -227,7 +233,7 @@
             <!-- VIEW: EXPLORE / SAVED -->
             <div v-else-if="currentTab === 'explore'" class="px-5">
                 
-                <div class="bg-bali-green/10 rounded-xl p-4 mb-6 flex items-start gap-3">
+                <div class="bg-bali-green/10 rounded-xl p-4 mb-6 flex items-start gap-1">
                     <i class="fa-solid fa-map-location-dot text-bali-green text-xl mt-1"></i>
                     <div>
                         <h3 class="font-bold text-bali-green text-sm">JAPA 周邊推薦</h3>
@@ -704,7 +710,7 @@
                 const getPageTitle = computed(() => {
                     if (currentTab.value === 'itinerary') return '烏布 !!!';
                     if (currentTab.value === 'explore') return 'JAPA Nearby';
-                    if (currentTab.value === 'map') return 'Route Map';
+                    if (currentTab.value === 'map') return 'Map';
                     return '';
                 });
 
